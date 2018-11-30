@@ -1,18 +1,10 @@
 const fs = require('fs');
 const dbmanager = require(__dirname + '\\DBManager.js');
+const blogpostbuilder = require(__dirname + '\\BlogPostBuilder.js');
+const blogbuilder = require(__dirname + '\\BlogBuilder.js');
+const indexbuilder = require(__dirname + '\\IndexBuilder.js');
 
 module.exports = {
-    createBlogPostHTML:function (post) {
-        var firstPeriod = post.body.indexOf('.');
-        if (firstPeriod == -1) firstPeriod = post.body.length;
-        var firstExclamation = post.body.indexOf('!');
-        if (firstExclamation == -1) firstExclamation = post.body.length;
-        var firstQuestion = post.body.indexOf('?');
-        if (firstQuestion == -1) firstQuestion = post.body.length;
-        description = post.body.substring(0, Math.min (firstPeriod, firstExclamation, firstQuestion));
-        return '<div class="col-lg-4 col-md-4"><div class="fh5co-blog animate-box"><a href="#"><img class="img-responsive" src="' + post.photopath + '" alt=""></a><div class="blog-text"><h3><a href=""#>' + post.title + '</a></h3><span class="posted_on">' + post.timestamp + '</span><p>' + description + '</p><a href="#" class="btn btn-primary">Read More</a></div></div></div>';
-    },
-
     displayPlainHtml:function (fileName, res) {
         fs.readFile(__dirname + "\\website\\" + fileName +".html", 'utf8', (err, data) => {  
             if (err) throw err;
@@ -21,44 +13,16 @@ module.exports = {
     },
 
     displayIndex:function(res) {
-        fs.readFile(__dirname + "\\website\\index_top.html", 'utf8', (err, dataTop) => {
-            if (err) throw err;
-
-            res.write(dataTop);
-
-            dbmanager.getPosts ((results) => {
-                
-                results.forEach(element => {
-                    res.write(this.createBlogPostHTML(element));                    
-                });
-                
-                fs.readFile(__dirname + "\\website\\index_bottom.html", 'utf8', (err, dataBottom) => {
-                    if (err) throw err;
-                    res.write(dataBottom);
-                    res.end();
-                });
-            });
-        });
+       dbmanager.getPosts((posts) => {
+           var page = indexbuilder.createPage (posts);
+           res.send (page);
+       });
     },
 
-    displayBlog:function(res) {
-        fs.readFile(__dirname + "\\website\\blog_top.html", 'utf8', (err, dataTop) => {
-            if (err) throw err;
-
-            res.write(dataTop);
-
-            dbmanager.getPosts ((results) => {
-                
-                results.forEach(element => {
-                    res.write(this.createBlogPostHTML(element));                    
-                });
-                
-                fs.readFile(__dirname + "\\website\\blog_bottom.html", 'utf8', (err, dataBottom) => {
-                    if (err) throw err;
-                    res.write(dataBottom);
-                    res.end();
-                });
-            });
+    displayBlog:function(req, res) {
+        dbmanager.getPosts((posts) => {
+            var page = blogbuilder.createPage (posts);
+            res.send (page);
         });
     },
 
@@ -67,6 +31,13 @@ module.exports = {
         fs.readFile(__dirname + "\\website\\insertforum.html", 'utf8', (err, data) => {
             if (err) throw err;
             res.send(data);
+        });
+    },
+
+    displayBlogPost:function(req, res) {
+        dbmanager.getPost (req.query.id, (post) => {
+            var page = blogpostbuilder.createPage(post[0]);
+            res.send (page);
         });
     },
 
@@ -88,7 +59,10 @@ module.exports = {
                 module.exports.displayIndex(res);
                 break;
             case 'blog':
-                module.exports.displayBlog(res);
+                module.exports.displayBlog(req, res);
+                break;
+            case 'blogpost':
+                module.exports.displayBlogPost(req, res);
                 break;
         }
     }
