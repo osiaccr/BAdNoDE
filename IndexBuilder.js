@@ -98,10 +98,10 @@ module.exports = {
                         <div class="display-tc animate-box" data-animate-effect="fadeIn">
                             <h1>Expertiza...</h1>
                             <div class="row">
-                                <form class="form-inline" id="fh5co-header-subscribe">
+                                <form class="form-inline" id="fh5co-header-subscribe" action="index" enctype="multipart/form-data" method="post">
                                     <div class="col-md-6 col-md-offset-3">
                                         <div class="form-group">
-                                            <input type="text" class="form-control" id="email" placeholder="Enter your email">
+                                            <input type="text" class="form-control" id="email" placeholder="Enter your email" name="email">
                                             <button type="submit" class="btn btn-default">Aboneaza-ta</button>
                                         </div>
                                     </div>

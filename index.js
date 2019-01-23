@@ -27,8 +27,14 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Create Table
-app.get('/createpoststable', dbmanager.createTable);
+// Create Posts Table
+app.get('/createpoststable', dbmanager.createPostsTable);
+
+//Create Subscribers Table
+app.get('/createsubscriberstable', dbmanager.createSubscribersTable);
+
+//Delete Subscribers Table
+app.get('/deletesubscriberstable', dbmanager.deleteSubscribersTable);
 
 //Get Posts 
 app.get('/getposts', dbmanager.getPosts);
@@ -45,8 +51,14 @@ app.get('/deletepost/:id', dbmanager.deletePost);
 //Insert Post
 app.post('/insertblog', dbmanager.formPost);
 
+//Send Message
+app.post('/contact', htmlloader.sendMessage)
+
 //Load css
 app.use(express.static(__dirname + '/website'));
+
+//Add subscriber to newsletter
+app.post('/index', htmlloader.addSubscriber);
 
 app.listen('3000', (req, res) => {
     console.log("server started on port 3000");

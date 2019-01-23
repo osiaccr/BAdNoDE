@@ -1,8 +1,10 @@
 const fs = require('fs');
+const formidable = require('formidable');
 const dbmanager = require(__dirname + '\\DBManager.js');
 const blogpostbuilder = require(__dirname + '\\BlogPostBuilder.js');
 const blogbuilder = require(__dirname + '\\BlogBuilder.js');
 const indexbuilder = require(__dirname + '\\IndexBuilder.js');
+const mailer = require(__dirname + '\\Mailer.js');
 
 module.exports = {
     displayPlainHtml:function (fileName, res) {
@@ -10,38 +12,75 @@ module.exports = {
             if (err) throw err;
             res.send (data);
         });
-    },
+    }
 
-    displayIndex:function(res) {
+    ,displayIndex:function(res) {
        dbmanager.getPosts((posts) => {
            var page = indexbuilder.createPage (posts);
            res.send (page);
        });
-    },
+    }
 
-    displayBlog:function(req, res) {
+    ,displayBlog:function(req, res) {
         dbmanager.getPosts((posts) => {
             var page = blogbuilder.createPage (posts);
             res.send (page);
         });
-    },
+    }
 
-    displayInsertPage:function(req, res) {
+    ,displayInsertPage:function(req, res) {
         if (req.query.key != global.key) throw 'INVALID KEY!'; 
         fs.readFile(__dirname + "\\website\\insertforum.html", 'utf8', (err, data) => {
             if (err) throw err;
             res.send(data);
         });
-    },
+    }
 
-    displayBlogPost:function(req, res) {
-        dbmanager.getPost (req.query.id, (post) => {
-            var page = blogpostbuilder.createPage(post[0]);
-            res.send (page);
+    ,displayBlogPost:function(req, res) {
+        dbmanager.getPost (req.query.id, (post, err) => {
+            if (err) 
+                res.send (err);
+            else {
+                var page = blogpostbuilder.createPage(post[0]);
+                res.send (page);
+            }
         });
-    },
+    }
 
-    loadPage:function(req, res) {
+    ,addSubscriber:function(req, res) {
+        var form = new formidable.IncomingForm();
+
+        form.parse(req, (err, fields, files) => {
+            if (err) throw err;
+            dbmanager.insertSubscriber(fields.email, () => {
+                module.exports.displayIndex(res);
+            });
+        });
+        
+    }
+
+    ,deleteSubscriber:function(req, res) {
+        dbmanager.deleteSubscriber (req.query.email, req.query.hash, (results) => {
+            if (results.affectedRows == 0) {
+                res.send ('404 Wrong Email Deletion');
+            }
+            else {
+                res.send (`La revedere ${req.query.email}`);
+            }
+        });
+    }
+
+    ,sendMessage:function(req, res) {
+        var form = new formidable.IncomingForm();
+
+        form.parse(req, (err, fields, fiels) => {
+            if (err) throw err;
+            mailer.sendMessage(fields);
+            module.exports.displayPlainHtml('contact', res);
+        });
+    }
+
+    ,loadPage:function(req, res) {
         switch (req.params.pageName) {
             case 'about':
                 module.exports.displayPlainHtml('about', res);
@@ -63,6 +102,9 @@ module.exports = {
                 break;
             case 'blogpost':
                 module.exports.displayBlogPost(req, res);
+                break;
+            case 'deletesubscriber':
+                module.exports.deleteSubscriber(req, res);
                 break;
         }
     }
