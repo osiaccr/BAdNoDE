@@ -60,7 +60,7 @@ app.use(express.static(__dirname + '/website'));
 //Add subscriber to newsletter
 app.post('/index', htmlloader.addSubscriber);
 
-app.listen('3000', (req, res) => {
+app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1', (req, res) => {
     console.log("server started on port 3000");
 });
 
