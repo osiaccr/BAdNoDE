@@ -1,14 +1,14 @@
 const fs = require('fs');
 const formidable = require('formidable');
-const dbmanager = require(__dirname + '\\DBManager.js');
-const blogpostbuilder = require(__dirname + '\\BlogPostBuilder.js');
-const blogbuilder = require(__dirname + '\\BlogBuilder.js');
-const indexbuilder = require(__dirname + '\\IndexBuilder.js');
-const mailer = require(__dirname + '\\Mailer.js');
+const dbmanager = require(__dirname + '/DBManager.js');
+const blogpostbuilder = require(__dirname + '/BlogPostBuilder.js');
+const blogbuilder = require(__dirname + '/BlogBuilder.js');
+const indexbuilder = require(__dirname + '/IndexBuilder.js');
+const mailer = require(__dirname + '/Mailer.js');
 
 module.exports = {
     displayPlainHtml:function (fileName, res) {
-        fs.readFile(__dirname + "\\website\\" + fileName +".html", 'utf8', (err, data) => {  
+        fs.readFile(__dirname + "/website/" + fileName +".html", 'utf8', (err, data) => {  
             if (err) throw err;
             res.send (data);
         });
@@ -30,7 +30,7 @@ module.exports = {
 
     ,displayInsertPage:function(req, res) {
         if (req.query.key != global.key) throw 'INVALID KEY!'; 
-        fs.readFile(__dirname + "\\website\\insertforum.html", 'utf8', (err, data) => {
+        fs.readFile(__dirname + "/website/insertforum.html", 'utf8', (err, data) => {
             if (err) throw err;
             res.send(data);
         });

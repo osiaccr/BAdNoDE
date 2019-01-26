@@ -1,8 +1,8 @@
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const dbmanager = require(__dirname + '\\DBManager.js');
-const htmlloader = require(__dirname + '\\HTMLLoader.js');
+const dbmanager = require(__dirname + '/DBManager.js');
+const htmlloader = require(__dirname + '/HTMLLoader.js');
 
 global.key = 1;
 
@@ -60,8 +60,8 @@ app.use(express.static(__dirname + '/website'));
 //Add subscriber to newsletter
 app.post('/index', htmlloader.addSubscriber);
 
-app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1', (req, res) => {
-    console.log("server started on port 3000");
+app.listen('8080', (req, res) => {
+    console.log("server started on port 8080");
 });
 
 // Load Page

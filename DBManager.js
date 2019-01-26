@@ -1,5 +1,5 @@
 const formidable = require('formidable');
-const mailer = require (__dirname + '\\Mailer.js');
+const mailer = require (__dirname + '/Mailer.js');
 const fs = require('fs');
 
 module.exports = {
