@@ -14,7 +14,7 @@ module.exports = {
         });
     }
 
-    ,displayIndex:function(res) {
+    ,displayIndex:function(req, res) {
        dbmanager.getPosts((posts) => {
            var page = indexbuilder.createPage (posts);
            res.send (page);
@@ -25,14 +25,6 @@ module.exports = {
         dbmanager.getPosts((posts) => {
             var page = blogbuilder.createPage (posts);
             res.send (page);
-        });
-    }
-
-    ,displayInsertPage:function(req, res) {
-        if (req.query.key != global.key) throw 'INVALID KEY!'; 
-        fs.readFile(__dirname + "/website/insertforum.html", 'utf8', (err, data) => {
-            if (err) throw err;
-            res.send(data);
         });
     }
 
@@ -53,7 +45,7 @@ module.exports = {
         form.parse(req, (err, fields, files) => {
             if (err) throw err;
             dbmanager.insertSubscriber(fields.email, () => {
-                module.exports.displayIndex(res);
+                module.exports.displayIndex(req, res);
             });
         });
         
@@ -95,7 +87,7 @@ module.exports = {
                 module.exports.displayInsertPage(req, res);
                 break; 
             case 'index':
-                module.exports.displayIndex(res);
+                module.exports.displayIndex(req, res);
                 break;
             case 'blog':
                 module.exports.displayBlog(req, res);

@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const dbmanager = require(__dirname + '/DBManager.js');
 const htmlloader = require(__dirname + '/HTMLLoader.js');
+const adminmanager = require(__dirname + '/admin/AdminManager.js');
 
 global.key = 1;
 
@@ -49,7 +50,7 @@ app.get('/updatepost/:id/:newTitle', dbmanager.updatePost);
 app.get('/deletepost/:id', dbmanager.deletePost);
 
 //Insert Post
-app.post('/insertblog', dbmanager.formPost);
+app.post('/:loginkey/insertpost', adminmanager.processPostToInserPost);
 
 //Send Message
 app.post('/contact', htmlloader.sendMessage)
@@ -66,3 +67,10 @@ app.listen('8080', (req, res) => {
 
 // Load Page
 app.get('/:pageName', htmlloader.loadPage);
+
+// Load Default Page
+app.get('', htmlloader.displayIndex);
+
+
+// Admin Page - All should be in the admin folder, which shoul NOT be fucked with
+app.get('/:loginkey/:pagename', adminmanager.processRequest);

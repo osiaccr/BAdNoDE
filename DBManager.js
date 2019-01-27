@@ -133,15 +133,15 @@ module.exports = {
     }
 
     //Delete Post
-    ,deletePost:function(req, res) {
-        module.exports.getPost(req.params.id, (result) => {
+    ,deletePost:function(req, res, callback) {
+        module.exports.getPost(Number(req.query.id), (result) => {
             fs.unlink(__dirname + '/website' + result[0].photopath, (err) => {
                 if (err) throw err;
-                let sql =`DELETE FROM posts WHERE id = ${req.params.id}`;
+                let sql =`DELETE FROM posts WHERE id = ${req.query.id}`;
                 let query = global.db.query(sql, (err, result) => {
                     if (err) throw err;
                     console.log (result);
-                    res.send("Post deleted");
+                    callback ();
                 });
             });
         });
@@ -187,7 +187,7 @@ module.exports = {
 
     //Get Subscribers
     ,getSubscribers:function(callback) {
-        let sql = `SELECT email, hash FROM subscribers;`;
+        let sql = `SELECT * FROM subscribers;`;
         global.db.query(sql, (err, results) => {
             if (err) throw err;
             callback(results);
