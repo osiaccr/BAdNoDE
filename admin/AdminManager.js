@@ -57,6 +57,12 @@ module.exports = {
             case 'deletesubscriber':
                 dbmanager.deleteSubscriber (req.query.email, req.query.hash, () => {res.send('Abonat Sters <br><a href = "showsubscribers">Inapoi</a>')});
                 break;
+            case 'createsubsciberstable':
+                dbmanager.createSubscribersTable ((err) => {if (err) res.send ('Tabela exista deja <br><a href = "index">Inapoi</a>'); else res.send ('Tabela Creata! <br><a href = "index">Inapoi</a>') });
+                break;
+            case 'createpoststable':
+                dbmanager.createPostsTable ((err) => {if (err) res.send ('Tabela exista deja <br><a href = "index">Inapoi</a>'); else res.send ('Tabela Creata! <br><a href = "index">Inapoi</a>') });
+                break;
             default:
                 res.send ('404!');
                 break;

@@ -4,12 +4,20 @@ const fs = require('fs');
 
 module.exports = {
     // Create Posts Table
-    createPostsTable:function(req, res) {
-        let sql = 'CREATE TABLE posts(id int AUTO_INCREMENT, title VARCHAR(255), body VARCHAR(255), PRIMARY KEY(id))';
-        global.db.query(sql, (err, result) => {
-            if(err) throw err;
-            console.log(result);
-            res.send('Post Talbe Created...');
+    createPostsTable:function(callback) {
+        let sql = `SHOW TABLES LIKE posts`;
+        global.db.query (sql, (err, result) => {
+            if ((typeof result) == 'undefined') {
+                let sql = 'CREATE TABLE posts(id int(10) PRIMARY KEY AUTO_INCREMENT, title VARCHAR(255), body mediumtext, photopath VARCHAR(255), timestamp VARCHAR(255))';
+                global.db.query(sql, (err, result) => {
+                    if (err) throw err;
+                    callback (false);
+                });
+            }
+            else {
+                callback(true);
+            }
+            
         });
     }
 
@@ -18,7 +26,7 @@ module.exports = {
         module.exports.getLatestPost ( (result) => {
             var form = new formidable.IncomingForm();
             var photoPath;
-            var JSONFields = '{';
+            var fields = Object;
             
             form.parse(req);
 
@@ -36,15 +44,20 @@ module.exports = {
                 }
             });
 
+            fields.photoPath = photoPath;
+
             form.on('field', (name, value) => {
-                JSONFields += '"' + name + '": "' + value + '",';
+                switch (name) {
+                    case 'title':
+                        fields.title = value;
+                        break;
+                    case 'body':
+                        fields.body = value;
+                        break;
+                }
             });
 
             form.on('end' ,() => {
-                JSONFields = JSONFields.slice(0, -1);
-                JSONFields += '}';
-                var fields = JSON.parse(JSONFields);
-
                 module.exports.insertPost(fields.title, fields.body, photoPath.replace(/\\/g, '/'), () => {
                     res.send("Post Succesfully added")
                 });
@@ -148,12 +161,19 @@ module.exports = {
     }
 
     //Create Subscribers Table
-    ,createSubscribersTable:function(req, res) {
-        let sql = 'CREATE TABLE subscribers(id int AUTO_INCREMENT, email VARCHAR(255), PRIMARY KEY(id))';
+    ,createSubscribersTable:function(callback) {
+        let sql = `SHOW TABLES LIKE 'subscribers'`;
         global.db.query(sql, (err, result) => {
-            if(err) throw err;
-            console.log(result);
-            res.send('Subscriber Talbe Created...');
+            if ((typeof reult) == 'undefined') {
+                let sql = 'CREATE TABLE subscribers(id int(10) PRIMARY KEY AUTO_INCREMENT, email VARCHAR(255), hash INT(20))';
+                global.db.query(sql, (err, result) => {
+                    if (err) throw err;
+                    callback (false);
+                });
+            }
+            else {
+                callback (true);
+            }
         });
     }
 

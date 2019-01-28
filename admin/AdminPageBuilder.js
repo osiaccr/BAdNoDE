@@ -19,6 +19,12 @@ module.exports = {
             <li>
                 <a href = "showsubscribers">Vezi tabela abonati<a>
             </li>
+            <li>
+                <a href = "createsubsciberstable">Creaza Tabela Abonati</a>
+            </li>
+            <li>
+                <a href = "createpoststable">Creaza Tabela Posturi</a>
+            </li>
         </ul>
     </body>
 </html>`

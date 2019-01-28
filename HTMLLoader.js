@@ -29,7 +29,7 @@ module.exports = {
     }
 
     ,displayBlogPost:function(req, res) {
-        dbmanager.getPost (req.query.id, (post, err) => {
+        dbmanager.getPost (Number(req.query.id), (post, err) => {
             if (err) 
                 res.send (err);
             else {

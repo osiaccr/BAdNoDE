@@ -23,7 +23,7 @@ ${fields.title}
 
 ${fields.body}
 
-Pentru mai multe informatii: http://localhost:3000/blogpost?id=${fields.id}
+Pentru mai multe informatii: http://localhost:8080/blogpost?id=${fields.id}
 
 Pentru a va dezabona de la newsletter va rog sa accesati: http://localhost:3000/deletesubscriber?email=${client.email}&hash=${client.hash}`;
         return string;
